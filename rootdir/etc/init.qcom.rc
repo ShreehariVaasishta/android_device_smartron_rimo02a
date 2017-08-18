@@ -585,7 +585,7 @@ service time_daemon /system/vendor/bin/time_daemon
     user root
     group root
 
-service power_off_alarm /vendor/bin/power_off_alarm
+service vendor.power_off_alarm /vendor/bin/power_off_alarm
     class core
     group system
     disabled
