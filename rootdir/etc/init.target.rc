@@ -281,6 +281,11 @@ service gx_fpd /system/bin/gx_fpd
     group root system
     seclabel u:r:goodix:s0
 
+service goodix_script /vendor/bin/init.goodix.sh
+    class late_start
+    user root
+    oneshot
+
 on charger
     setprop persist.sys.usb.config mass_storage
     start qcom-post-boot
