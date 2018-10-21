@@ -8,8 +8,8 @@ LOCAL_C_INCLUDES := \
     external/selinux/libselinux/include
 
 LOCAL_CFLAGS := -Wall -DANDROID_TARGET=\"$(TARGET_BOARD_PLATFORM)\"
-LOCAL_SRC_FILES := init_s2.cpp
+LOCAL_SRC_FILES := init_rimo02a.cpp
 
-LOCAL_MODULE := libinit_s2
+LOCAL_MODULE := libinit_rimo02a
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_STATIC_LIBRARY)

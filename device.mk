@@ -19,7 +19,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # Get non-open-source specific aspects
-$(call inherit-product, vendor/leeco/s2/s2-vendor.mk)
+$(call inherit-product, vendor/smartron/rimo02a/rimo02a-vendor.mk)
 
 # Overlay
 DEVICE_PACKAGE_OVERLAYS += \
@@ -181,8 +181,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/ad_calib.cfg:system/etc/ad_calib.cfg
 
 # Doze mode
-PRODUCT_PACKAGES += \
-    Doze
+#PRODUCT_PACKAGES += \
+#    Doze
 
 # Fake logprint for fingerprint libs
 PRODUCT_PACKAGES += \
@@ -232,7 +232,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/gpio-keys.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/gpio-keys.kl \
     $(LOCAL_PATH)/keylayout/msm8976-skun-snd-card_Button_Jack.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/msm8976-skun-snd-card_Button_Jack.kl \
     $(LOCAL_PATH)/keylayout/synaptics_dsx.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/synaptics_dsx.kl \
-    $(LOCAL_PATH)/keylayout/synaptics_dsx_s2.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/synaptics_dsx_s2.kl \
+    $(LOCAL_PATH)/keylayout/synaptics_dsx_rimo02a.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/synaptics_dsx_rimo02a.kl \
     $(LOCAL_PATH)/keylayout/synaptics_rmi4_i2c.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/synaptics_rmi4_i2c.kl
 
 # IMS
@@ -328,7 +328,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     init.qcom.rc \
     init.target.rc \
-    init.s2.usb.rc \
+    init.rimo02a.usb.rc \
     init.qcom.power.rc \
     ueventd.qcom.rc
 

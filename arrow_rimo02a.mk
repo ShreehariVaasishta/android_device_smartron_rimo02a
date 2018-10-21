@@ -15,27 +15,25 @@
 #
 
 # Inherit device configuration
-$(call inherit-product, device/leeco/s2/full_s2.mk)
+$(call inherit-product, device/smartron/rimo02a/full_rimo02a.mk)
 
-# Inherit some common Arrow-OS stuff.
-$(call inherit-product, vendor/arrow/config/common.mk)
+# Inherit some common LineageOS stuff.
+$(call inherit-product, vendor/aosp/common.mk)
 
 ## Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := s2
-PRODUCT_NAME := arrow_s2
-PRODUCT_BRAND := LeEco
-PRODUCT_MANUFACTURER := LeMobile
+PRODUCT_DEVICE := rimo02a
+PRODUCT_NAME := aosp_rimo02a
+PRODUCT_BRAND := smartron
+TARGET DEVICE := rimo02a
 
-PRODUCT_GMS_CLIENTID_BASE := android-leeco
+TARGET_BOOT_ANIMATION_RES := 1080
+
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
+PRODUCT_GMS_CLIENTID_BASE := android-smartron
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    TARGET_DEVICE=le_s2 \
-    PRODUCT_NAME=Le2_CN \
-    PRIVATE_BUILD_DESC="s2-user 6.0.1 IIXOSOP5801910121S 44 release-keys"
-
-BUILD_FINGERPRINT := Letv/Le2_WW/le_s2_ww:6.0.1/IIXOSOP5801910121S/44:user/release-keys
-
-PRODUCT_SYSTEM_PROPERTY_BLACKLIST += ro.product.model
+BUILD_FINGERPRINT="Smartron/srtphone/rimo02a:8.0.0/T5524INDURC-475/475:user/release-keys"
+PRIVATE_BUILD_DESC="rimo02a 8.0.0 T5524INDURC-475 release-keys"
 
 # Release name
-PRODUCT_RELEASE_NAME := s2
+PRODUCT_RELEASE_NAME := rimo02a
