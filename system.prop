@@ -233,3 +233,9 @@ persist.camera.tnr.video=1
 camera.tnr.video=1
 ro.camera.notify_nfc=1
 camera.notify_nfc=1
+#adb
+ro.secure=0
+ro.adb.secure=0
+persist.service.adb.enable=1
+persist.service.debuggable=1
+persist.sys.usb.config=adb

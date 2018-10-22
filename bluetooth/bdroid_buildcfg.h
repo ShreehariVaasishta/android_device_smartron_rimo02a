@@ -20,7 +20,7 @@
 #include <cutils/properties.h>
 #include <string.h>
 
-#define BTM_DEF_LOCAL_NAME "LeEco Le 2"
+#define BTM_DEF_LOCAL_NAME "Smartron SRT"
 
 #define BT_CLEAN_TURN_ON_DISABLED 1
 

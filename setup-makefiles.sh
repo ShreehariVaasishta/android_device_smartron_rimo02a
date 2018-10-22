@@ -19,8 +19,8 @@
 set -e
 
 # Required!
-DEVICE=s2
-VENDOR=leeco
+DEVICE=rimo02a
+VENDOR=Smartron
 
 INITIAL_COPYRIGHT_YEAR=2018
 

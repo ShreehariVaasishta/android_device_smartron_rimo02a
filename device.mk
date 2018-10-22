@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_m.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_n.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # Get non-open-source specific aspects
@@ -179,18 +179,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/ad_calib.cfg:system/etc/ad_calib.cfg
-
-# Doze mode
-#PRODUCT_PACKAGES += \
-#    Doze
-
-# Fake logprint for fingerprint libs
-PRODUCT_PACKAGES += \
-    fakelogprint
-
-# Fingerprint
-PRODUCT_PACKAGES += \
-    fingerprint.msm8952
 
 # For android_filesystem_config.h
 PRODUCT_PACKAGES += \
