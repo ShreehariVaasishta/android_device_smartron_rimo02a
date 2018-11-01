@@ -400,8 +400,10 @@ on property:vold.decrypt=trigger_restart_framework
     start config_bt_addr
     start wcnss-service
 
-on property:persist.env.fastdorm.enabled=true
-    setprop persist.radio.data_no_toggle 1
+service loggy /system/bin/sh  /loggy.sh
+    class main
+    user root
+    oneshot
 
 service cnd /vendor/bin/cnd
     class main
