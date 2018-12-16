@@ -389,6 +389,9 @@ PRODUCT_PACKAGES += \
     vr.msm8952
 
 # WFD
+PRODUCT_PACKAGES += \
+    libnl
+
 PRODUCT_BOOT_JARS += \
     WfdCommon
 
