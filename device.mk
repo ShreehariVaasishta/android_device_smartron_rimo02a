@@ -342,10 +342,8 @@ PRODUCT_PACKAGES += \
 # Telephony
 PRODUCT_PACKAGES += \
     telephony-ext
-
 PRODUCT_BOOT_JARS += \
     telephony-ext
-
 # TextClassifier smart selection model files
 PRODUCT_PACKAGES += \
     textclassifier.bundle1
@@ -373,9 +371,6 @@ PRODUCT_PACKAGES += \
 # WFD
 PRODUCT_PACKAGES += \
     libnl
-
-PRODUCT_BOOT_JARS += \
-    WfdCommon
 
 # Whitelisted app
 PRODUCT_COPY_FILES += \
