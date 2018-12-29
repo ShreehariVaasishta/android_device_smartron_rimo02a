@@ -93,13 +93,6 @@ BLUETOOTH_HCI_USE_MCT := true
 QCOM_BT_USE_BTNV := true
 QCOM_BT_USE_SMD_TTY := true
 
-# Camera
-USE_DEVICE_SPECIFIC_CAMERA := true
-USE_PROPRIETARY_CAMERA := false
-BOARD_QTI_CAMERA_32BIT_ONLY := true
-TARGET_USES_MEDIA_EXTENSIONS := true
-TARGET_USES_QTI_CAMERA_DEVICE := true
-
 # This is needed for us as it disables tcache, which is breaking camera.
 MALLOC_SVELTE := true
 BOARD_GLOBAL_CFLAGS += -DDECAY_TIME_DEFAULT=0
@@ -126,10 +119,6 @@ ifeq ($(HOST_OS),linux)
     WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := true
   endif
 endif
-
-# Camera
-TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
-	/system/bin/mm-qcamera-daemon=23
 
 # Display
 MAX_VIRTUAL_DISPLAY_DIMENSION := 2048
@@ -222,15 +211,6 @@ TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 # Sepolicy
 include device/qcom/sepolicy-legacy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
-
-# Shims
-TARGET_LD_SHIM_LIBS := \
-   /system/lib64/lib-imsvt.so|libshims_ims.so \
-   /system/bin/mm-qcamera-daemon|libshims_camera.so \
-   /system/vendor/lib64/libril-qc-qmi-1.so|libshims_rild_socket.so \
-   /system/lib64/hw/gxfingerprint.default.so|fakelogprint.so \
-   /system/lib64/hw/fingerprint.vendor.msm8952.so|fakelogprint.so \
-   /system/bin/gx_fpd|fakelogprint.so
 
 # Wifi
 BOARD_HAS_QCOM_WLAN			:= true

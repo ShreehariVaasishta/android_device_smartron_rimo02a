@@ -1,8 +1,7 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
- * Copyright (C) 2014 The Linux Foundation. All rights reserved.
- * Copyright (C) 2015 The CyanogenMod Project
- * Copyright (C) 2017 The LineageOS Project
+ * Copyright (C) 2018 The Android Open Source Project
+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2018 The LineageOS Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +16,9 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "lights"
+
+// #define LOG_NDEBUG 0
+
 #include <cutils/log.h>
 
 #include <stdint.h>
@@ -41,38 +42,38 @@ static struct light_state_t g_notification;
 static struct light_state_t g_battery;
 static struct light_state_t g_attention;
 
+char const*const LCD_FILE
+        = "/sys/class/leds/lcd-backlight/brightness";
+
+char const*const BUTTON_FILE
+        = "/sys/class/leds/button-backlight/brightness";
+
 char const*const RED_LED_FILE
         = "/sys/class/leds/red/brightness";
-
-char const*const RED_BLINK_FILE
-	= "/sys/class/leds/red/blink";
-
-char const*const GREEN_BLINK_FILE
-	= "/sys/class/leds/green/blink";
-
-char const*const BLUE_BLINK_FILE
-	= "/sys/class/leds/blue/blink";
-
-char const*const GREEN_LED_FILE
-        = "/sys/class/leds/green/brightness";
 
 char const*const BLUE_LED_FILE
         = "/sys/class/leds/blue/brightness";
 
-char const*const LCD_FILE
-        = "/sys/class/leds/lcd-backlight/brightness";
+char const*const GREEN_LED_FILE
+        = "/sys/class/leds/green/brightness";
+
+char const*const RED_BLINK_FILE
+    = "/sys/class/leds/red/blink";
+
+char const*const BLUE_BLINK_FILE
+    = "/sys/class/leds/blue/blink";
+
+char const*const GREEN_BLINK_FILE
+    = "/sys/class/leds/green/blink";
 
 char const*const RED_BREATH_FILE
         = "/sys/class/leds/red/led_time";
 
-char const*const GREEN_BREATH_FILE
-        = "/sys/class/leds/green/led_time";
-
 char const*const BLUE_BREATH_FILE
         = "/sys/class/leds/blue/led_time";
 
-char const*const BUTTON_FILE
-        = "/sys/class/leds/button-backlight/brightness";
+char const*const GREEN_BREATH_FILE
+        = "/sys/class/leds/green/led_time";
 
 struct color {
     unsigned int r, g, b;
@@ -128,7 +129,6 @@ static void rgb2lab(unsigned int R, unsigned int G, unsigned int B,
         b = b / 12;
     else
         b = (float) pow((b + 0.055) / 1.055, 2.4);
-
 
     X = 0.436052025f * r + 0.385081593f * g + 0.143087414f * b;
     Y = 0.222491598f * r + 0.71688606f * g + 0.060621486f * b;
@@ -433,11 +433,16 @@ set_light_buttons(struct light_device_t* dev,
         struct light_state_t const* state)
 {
     int err = 0;
+    int brightness = rgb_to_brightness(state);
     if(!dev) {
         return -1;
     }
+    
+    /* Mi Max max button brightness is 40 so let's write correct brightness */
+    brightness /= 6.375;
+    
     pthread_mutex_lock(&g_lock);
-    err = write_int(BUTTON_FILE, state->color & 0xFF);
+    err = write_int(BUTTON_FILE, round(brightness));
     pthread_mutex_unlock(&g_lock);
     return err;
 }
@@ -451,7 +456,6 @@ close_lights(struct light_device_t *dev)
     }
     return 0;
 }
-
 
 /******************************************************************************/
 
@@ -510,7 +514,7 @@ struct hw_module_t HAL_MODULE_INFO_SYM = {
     .version_major = 1,
     .version_minor = 0,
     .id = LIGHTS_HARDWARE_MODULE_ID,
-    .name = "LeEco s2 Lights Module",
-    .author = "The LineageOS Project",
+    .name = "Lights Module",
+    .author = "The CyanogenMod Project",
     .methods = &lights_module_methods,
 };
