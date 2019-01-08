@@ -14,4 +14,4 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/arrow_rimo02a.mk
+    $(LOCAL_DIR)/aosp_rimo02a.mk

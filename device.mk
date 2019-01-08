@@ -283,12 +283,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.qcom.sh \
-    init.goodix.sh
+    init.goodix.sh \
+    init.rimo.rc
 
 PRODUCT_PACKAGES += \
     init.qcom.rc \
     init.target.rc \
-    init.rimo02a.usb.rc \
+    init.qcom.usb.rc \
     init.qcom.power.rc \
     loggy.sh \
     ueventd.qcom.rc
@@ -300,9 +301,19 @@ PRODUCT_PACKAGES += \
     rcs_service_api \
     rcs_service_api.xml
 
-# Ril
+# Telephony
 PRODUCT_PACKAGES += \
-    librmnetctl
+   telephony-ext
+
+
+# RIL
+PRODUCT_PACKAGES += \
+    librmnetctl \
+    libxml2 \
+    libqsap_sdk \
+    telephony-ext \
+    libminui \
+    qti-telephony-common
 
 # Seccomp policy
 PRODUCT_COPY_FILES += \
@@ -341,10 +352,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/thermal-engine.conf:$(TARGET_COPY_OUT_VENDOR)/etc/thermal-engine.conf \
     $(LOCAL_PATH)/configs/thermal-engine-srtphone.conf:system/etc/thermal-engine-srtphone.conf
 
-# USB
+# USB HAL
 PRODUCT_PACKAGES += \
-    com.android.future.usb.accessory
-
+    android.hardware.usb@1.0-service.basic
+    
 # Vendor security patch level
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.lineage.build.vendor_security_patch=2016-12-01

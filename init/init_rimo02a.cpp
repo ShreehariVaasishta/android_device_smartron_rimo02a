@@ -110,6 +110,6 @@ void vendor_load_properties() {
     else
     {
         // Unknown variant
-        property_set("ro.product.model", "X52X");
+        property_set("ro.product.model", "SRT phone");
     }
 }
