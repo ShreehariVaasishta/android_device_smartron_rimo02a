@@ -2,5 +2,5 @@
 # loggy.sh.
 
 date=`date +%F_%H-%M-%S`
-logcat -v time -f  /cache/cm13logcat_${date}.txt
+logcat -v time -f  /cache/Android_PIE_logcat_${date}.txt
 
