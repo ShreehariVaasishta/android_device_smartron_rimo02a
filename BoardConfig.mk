@@ -212,6 +212,9 @@ TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 include device/qcom/sepolicy-legacy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
+# Enable real time lockscreen charging current values
+BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
+
 # Wifi
 BOARD_HAS_QCOM_WLAN			:= true
 BOARD_HAS_QCOM_WLAN_SDK			:= true
