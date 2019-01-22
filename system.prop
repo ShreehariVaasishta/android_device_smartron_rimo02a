@@ -56,6 +56,8 @@ media.camera.ts.monotonic=1
 camera.lowpower.record.enable=1
 persist.sys.exif.make=Smartron
 persist.sys.exif.model=Srtphone
+# force HAL1 for below packages
+camera.hal1.packagelist=com.skype.raider,com.google.android.talk
 
 # Additional buffers shared between Camera and Video
 vidc.enc.dcvs.extra-buff-count=2
