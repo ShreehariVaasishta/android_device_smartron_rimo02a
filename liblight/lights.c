@@ -45,8 +45,14 @@ static struct light_state_t g_attention;
 char const*const LCD_FILE
         = "/sys/class/leds/lcd-backlight/brightness";
 
-char const*const BUTTON_FILE
-        = "/sys/class/leds/button-backlight/brightness";
+char const*const BUTTON_FILE_R
+        = "/sys/class/leds/rgb_r/brightness";
+
+char const*const BUTTON_FILE_G
+        = "/sys/class/leds/rgb_g/brightness";
+
+char const*const BUTTON_FILE_B
+        = "/sys/class/leds/rgb_b/brightness";
 
 char const*const RED_LED_FILE
         = "/sys/class/leds/red/brightness";
@@ -437,12 +443,14 @@ set_light_buttons(struct light_device_t* dev,
     if(!dev) {
         return -1;
     }
-    
+
     /* Mi Max max button brightness is 40 so let's write correct brightness */
     brightness /= 6.375;
-    
+
     pthread_mutex_lock(&g_lock);
-    err = write_int(BUTTON_FILE, round(brightness));
+    err = write_int(BUTTON_FILE_R, round(brightness));
+    err = write_int(BUTTON_FILE_G, round(brightness));
+    err = write_int(BUTTON_FILE_B, round(brightness));
     pthread_mutex_unlock(&g_lock);
     return err;
 }
