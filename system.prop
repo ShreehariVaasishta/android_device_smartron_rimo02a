@@ -50,14 +50,11 @@ ro.qualcomm.bt.hci_transport=smd
 sys.vendor.shutdown.waittime=500
 
 # Camera
-camera.display.umax=1920x1080
-camera.display.lmax=1280x720
-media.camera.ts.monotonic=1
-camera.lowpower.record.enable=1
-persist.sys.exif.make=Smartron
-persist.sys.exif.model=Srtphone
-# force HAL1 for below packages
-camera.hal1.packagelist=com.skype.raider,com.google.android.talk
+PRODUCT_PROPERTY_OVERRIDES += \
+persist.vendor.camera.display.umax=1920x1080 \
+persist.vendor.camera.display.lmax=1280x720 \
+vendor.camera.lowpower.record.enable=1 \
+persist.vendor.qti.telephony.vt_cam_interface=1
 
 # Additional buffers shared between Camera and Video
 vidc.enc.dcvs.extra-buff-count=2
@@ -222,3 +219,21 @@ persist.service.adb.enable=1
 persist.service.debuggable=1
 persist.sys.usb.config=adb
 persist.sys.usb.config.extra=none 
+
+# GCAM Fixes
+persist.camera.eis.enable=1
+camera.eis.enable=1
+persist.camera.is_mode=4
+camera.is_mode=4
+persist.camera.disable_zsl_mode=1
+camera.disable_zsl_mode=1
+persist.camera.gyro.android=4
+camera.gyro.android=4
+persist.camera.tof.direct=1
+camera.tof.direct=1
+persist.camera.tnr.preview=1
+camera.tnr.preview=1
+persist.camera.tnr.video=1
+camera.tnr.video=1
+ro.camera.notify_nfc=1
+camera.notify_nfc=1
