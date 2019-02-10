@@ -25,6 +25,7 @@ PRODUCT_DEVICE := rimo02a
 PRODUCT_NAME := dot_rimo02a
 PRODUCT_BRAND := smartron
 TARGET DEVICE := rimo02a
+PRODUCT_MANUFACTURER := smartron
 
 PRODUCT_GMS_CLIENTID_BASE := android-smartron
 
