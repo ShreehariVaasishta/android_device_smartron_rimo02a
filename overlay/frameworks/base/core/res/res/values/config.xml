@@ -30,6 +30,11 @@
          The user is forbidden from setting the brightness below this level. -->
     <integer name="config_screenBrightnessSettingMinimum">1</integer>
 
+    <!-- Screen brightness used to dim the screen when the user activity
+         timeout expires.  May be less than the minimum allowed brightness setting
+         that can be set by the user. -->
+    <integer name="config_screenBrightnessDim">1</integer>
+
     <!-- Default screen brightness setting.
          Must be in the range specified by minimum and maximum. -->
     <integer name="config_screenBrightnessSettingDefault">128</integer>
@@ -58,18 +63,16 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>10</item>     <!-- twilight -->
-        <item>50</item>     <!-- dim indoor -->
-        <item>100</item>    <!-- home -->
-        <item>200</item>    <!-- office --> 
-        <item>400</item>    
-        <item>500</item>    <!-- sunrise -->
-        <item>800</item>
-        <item>1000</item>   <!-- overcast -->
-        <item>1600</item>   
-        <item>3000</item>   <!-- indirect sun -->
-        <item>10000</item>  <!-- daylight -->
-
+        <item>1</item>        <!-- pitch black -->
+        <item>5</item>        <!-- dark indoor -->
+        <item>10</item>       <!-- twilight -->
+        <item>50</item>       <!-- dim indoor -->
+        <item>100</item>      <!-- home -->
+        <item>300</item>      <!-- office -->
+        <item>500</item>      <!-- sunrise -->
+        <item>1000</item>     <!-- overcast -->
+        <item>3000</item>     <!-- indirect sun -->
+        <item>10000</item>    <!-- daylight -->
     </integer-array>
 
     <!-- Array of desired screen brightness in nits corresponding to the lux values
@@ -85,27 +88,19 @@
          This array should have size one greater than the size of the config_autoBrightnessLevels
          array. The brightness values must be non-negative and non-decreasing. This must be
          overridden in platform specific overlays -->
-    <array name="config_autoBrightnessDisplayValuesNits">
-        <item>7.702998</item>
-        <item>32.31226</item>
-        <item>38.786167</item>
-        <item>43.30993</item>
-        <item>46.851162</item>
-        <item>55.90478</item>
-        <item>61.334614</item>
-        <item>68.4388</item>
-        <item>75.59099</item>
-        <item>82.8686</item>
-        <item>91.49397</item>
-        <item>102.49851</item>
-        <item>118.8174</item>
-        <item>144.68486</item>
-        <item>180.69225</item>
-        <item>225.84135</item>
-        <item>292.46844</item>
-        <item>377.05084</item>
-        <item>481.93427</item>
-    </array>
+    <integer-array name="config_autoBrightnessLcdBacklightValues">
+        <item>16</item>
+        <item>20</item>
+        <item>24</item>
+        <item>31</item>
+        <item>48</item>
+        <item>74</item>
+        <item>107</item>
+        <item>152</item>
+        <item>194</item>
+        <item>254</item>
+        <item>255</item>
+    </integer-array>
 
     <!-- An array describing the screen's backlight values corresponding to the brightness
          values in the config_screenBrightnessNits array.
