@@ -63,16 +63,25 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>1</item>        <!-- pitch black -->
-        <item>5</item>        <!-- dark indoor -->
-        <item>10</item>       <!-- twilight -->
-        <item>50</item>       <!-- dim indoor -->
-        <item>100</item>      <!-- home -->
-        <item>300</item>      <!-- office -->
-        <item>500</item>      <!-- sunrise -->
-        <item>1000</item>     <!-- overcast -->
-        <item>3000</item>     <!-- indirect sun -->
-        <item>10000</item>    <!-- daylight -->
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+        <item>50</item>
+        <item>100</item>
+        <item>230</item>
+        <item>400</item>
+        <item>500</item>
+        <item>650</item>
+        <item>825</item>
+        <item>1000</item>
+        <item>2500</item>
+        <item>5000</item>
+        <item>6250</item>
+        <item>7500</item>
+        <item>10000</item>
+        <item>12000</item>
     </integer-array>
 
     <!-- Array of desired screen brightness in nits corresponding to the lux values
@@ -89,43 +98,32 @@
          array. The brightness values must be non-negative and non-decreasing. This must be
          overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>16</item>
-        <item>20</item>
-        <item>24</item>
-        <item>31</item>
-        <item>48</item>
-        <item>74</item>
-        <item>107</item>
-        <item>152</item>
-        <item>194</item>
-        <item>254</item>
-        <item>255</item>
+        <item>12</item>     <!-- 0-5 -->
+        <item>16</item>     <!-- 6-7 -->
+        <item>18</item>     <!-- 8-9 -->
+        <item>20</item>     <!-- 10-14 -->
+        <item>25</item>     <!-- 15-29 -->
+        <item>28</item>     <!-- 30-49 -->
+        <item>34</item>     <!-- 50-99 -->
+        <item>37</item>     <!-- 100-229 -->
+        <item>41</item>     <!-- 239-399 -->
+        <item>48</item>     <!-- 400-499 -->
+        <item>57</item>     <!-- 500-649 -->
+        <item>75</item>     <!-- 650-824 -->
+        <item>81</item>     <!-- 825-999 -->
+        <item>90</item>     <!-- 1000-2499 -->
+        <item>100</item>    <!-- 2500-4999 -->
+        <item>125</item>    <!-- 5000-6249 -->
+        <item>165</item>    <!-- 6250-7499 -->
+        <item>200</item>    <!-- 7500-9999 -->
+        <item>225</item>    <!-- 10000-11999 -->
+        <item>255</item>    <!-- 12000-19417 (max value of light sensor) -->
     </integer-array>
 
     <!-- An array describing the screen's backlight values corresponding to the brightness
          values in the config_screenBrightnessNits array.
 
          This array should be equal in size to config_screenBrightnessBacklight. -->
-    <integer-array name="config_screenBrightnessBacklight">
-        <item>0</item>
-        <item>15</item>
-        <item>30</item>
-        <item>45</item>
-        <item>60</item>
-        <item>75</item>
-        <item>90</item>
-        <item>105</item>
-        <item>120</item>
-        <item>135</item>
-        <item>150</item>
-        <item>165</item>
-        <item>180</item>
-        <item>195</item>
-        <item>210</item>
-        <item>225</item>
-        <item>240</item>
-        <item>255</item>
-    </integer-array>
 
     <!-- An array of floats describing the screen brightness in nits corresponding to the backlight
          values in the config_screenBrightnessBacklight array.  On OLED displays these  values
@@ -133,75 +131,6 @@
          Note that this value should *not* reflect the maximum brightness value for any high
          brightness modes but only the maximum brightness value obtainable in a sustainable manner.
          This array should be equal in size to config_screenBrightnessBacklight -->
-    <array name="config_screenBrightnessNits">
-        <item>2.685</item>
-        <item>3.343</item>
-        <item>4.13</item>
-        <item>5.216</item>
-        <item>6.308</item>
-        <item>7.565</item>
-        <item>9.269</item>
-        <item>10.98</item>
-        <item>13.25</item>
-        <item>15.49</item>
-        <item>18.42</item>
-        <item>20.6</item>
-        <item>22.71</item>
-        <item>24.68</item>
-        <item>26.31</item>
-        <item>28.39</item>
-        <item>30.34</item>
-        <item>32.39</item>
-        <item>33.94</item>
-        <item>35.94</item>
-        <item>45.12</item>
-        <item>54</item>
-        <item>62.31</item>
-        <item>70.73</item>
-        <item>78.85</item>
-        <item>86.41</item>
-        <item>93.53</item>
-        <item>102.3</item>
-        <item>109.1</item>
-        <item>118.7</item>
-        <item>126.4</item>
-        <item>136.9</item>
-        <item>147.8</item>
-        <item>158.9</item>
-        <item>168.3</item>
-        <item>177.4</item>
-        <item>186.6</item>
-        <item>195.7</item>
-        <item>204.5</item>
-        <item>214</item>
-        <item>221.8</item>
-        <item>234</item>
-        <item>242.1</item>
-        <item>250.6</item>
-        <item>263.4</item>
-        <item>272.4</item>
-        <item>282.5</item>
-        <item>296.3</item>
-        <item>305.6</item>
-        <item>315.3</item>
-        <item>329.8</item>
-        <item>339.8</item>
-        <item>349.7</item>
-        <item>357.4</item>
-        <item>364.6</item>
-        <item>374.6</item>
-        <item>384.9</item>
-        <item>392.5</item>
-        <item>402.8</item>
-        <item>413.6</item>
-        <item>421.6</item>
-        <item>432.2</item>
-        <item>440.3</item>
-        <item>448.3</item>
-        <item>459.2</item>
-        <item>467.6</item>
-        <item>478.5</item>
-    </array>
 
     <!-- Enable adjusting the button backlight -->
     <bool name="config_deviceHasVariableButtonBrightness">true</bool>
