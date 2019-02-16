@@ -18,6 +18,7 @@
 $(call inherit-product, device/smartron/rimo02a/full_rimo02a.mk)
 
 # Inherit some common dotOS stuff.
+TARGET_BOOT_ANIMATION_RES := 1080
 $(call inherit-product, vendor/dot/config/common.mk)
 
 ## Device identifier. This must come after all inclusions
