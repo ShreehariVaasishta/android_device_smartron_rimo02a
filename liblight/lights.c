@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2018 The Android Open Source Project
- * Copyright (C) 2018 The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 The LineageOS Open Source Project
+ * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2014 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2015 The CyanogenMod Project
+ * Copyright (C) 2017 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,14 +46,8 @@ static struct light_state_t g_attention;
 char const*const LCD_FILE
         = "/sys/class/leds/lcd-backlight/brightness";
 
-char const*const BUTTON_FILE_R
-        = "/sys/class/leds/rgb_r/brightness";
-
-char const*const BUTTON_FILE_G
-        = "/sys/class/leds/rgb_g/brightness";
-
-char const*const BUTTON_FILE_B
-        = "/sys/class/leds/rgb_b/brightness";
+char const*const BUTTON_FILE
+        = "/sys/class/leds/button-backlight/brightness";
 
 char const*const RED_LED_FILE
         = "/sys/class/leds/red/brightness";
@@ -443,14 +438,12 @@ set_light_buttons(struct light_device_t* dev,
     if(!dev) {
         return -1;
     }
-
+    
     /* Mi Max max button brightness is 40 so let's write correct brightness */
     brightness /= 6.375;
-
+    
     pthread_mutex_lock(&g_lock);
-    err = write_int(BUTTON_FILE_R, round(brightness));
-    err = write_int(BUTTON_FILE_G, round(brightness));
-    err = write_int(BUTTON_FILE_B, round(brightness));
+    err = write_int(BUTTON_FILE, round(brightness));
     pthread_mutex_unlock(&g_lock);
     return err;
 }
@@ -523,6 +516,6 @@ struct hw_module_t HAL_MODULE_INFO_SYM = {
     .version_minor = 0,
     .id = LIGHTS_HARDWARE_MODULE_ID,
     .name = "Lights Module",
-    .author = "The CyanogenMod Project",
+    .author = "The LineageOS Project",
     .methods = &lights_module_methods,
 };
