@@ -7,6 +7,10 @@ etc/acdbdata/QRD/msm8976-skun-snd-card/QRD_SKUN_Hdmi_cal.acdb
 etc/acdbdata/QRD/msm8976-skun-snd-card/QRD_SKUN_Headset_cal.acdb
 etc/acdbdata/QRD/msm8976-skun-snd-card/QRD_SKUN_Speaker_cal.acdb
 
+# Audiosphere
+lib/soundfx/libasphere.so
+lib64/soundfx/libasphere.so
+
 # Camera
 lib/hw/camera.msm8952.so
 lib/libmmcamera_interface.so
