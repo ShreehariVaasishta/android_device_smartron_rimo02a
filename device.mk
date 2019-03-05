@@ -147,6 +147,8 @@ PRODUCT_PACKAGES += \
 # Camera
 PRODUCT_PACKAGES += \
     Snap \
+    SnapdragonCamera \
+    SnapdragonCamera2 \
     camera.msm8952 \
     libmm-qcamera \
 
