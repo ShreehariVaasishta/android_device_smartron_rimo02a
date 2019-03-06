@@ -76,6 +76,7 @@ dalvik.vm.image-dex2oat-threads=4
 
 # Fastcharge
 persist.sys.le_fast_chrg_enable=1
+persist.hvdcp.allow_opti=1
 
 # Fingerprint
 persist.qfp=false
