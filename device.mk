@@ -25,8 +25,8 @@ $(call inherit-product, vendor/smartron/rimo02a/rimo02a-vendor.mk)
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
 
-#PRODUCT_ENFORCE_RRO_TARGETS := \
-#    framework-res
+PRODUCT_ENFORCE_RRO_TARGETS := \
+    framework-res
 
 # Screen density
 PRODUCT_AAPT_PREF_CONFIG := xxhdpi
