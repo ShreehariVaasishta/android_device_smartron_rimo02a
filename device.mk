@@ -146,6 +146,7 @@ PRODUCT_PACKAGES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    Snap \
     SnapdragonCamera \
     snap \
     SnapdragonCamera2 \
