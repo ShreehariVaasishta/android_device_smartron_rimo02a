@@ -235,6 +235,9 @@ TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 # Enable real time lockscreen charging current values
 BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
+# Telephony
+TARGET_USES_ALTERNATIVE_MANUAL_NETWORK_SELECT := true
+
 # Wifi
 BOARD_HAS_QCOM_WLAN			:= true
 BOARD_HAS_QCOM_WLAN_SDK			:= true
