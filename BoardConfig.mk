@@ -252,7 +252,7 @@ WPA_SUPPLICANT_VERSION			:= VER_0_8_X
 TARGET_USES_WCNSS_MAC_ADDR_REV		:= true
 
 # OTA Assert
-#TARGET_OTA_ASSERT_DEVICE := s2,le_s2,le_s2_ww
+ TARGET_OTA_ASSERT_DEVICE := rimo02a, SRT phone
 
 # inherit from the proprietary version
 -include vendor/smartron/rimo02a/BoardConfigVendor.mk
