@@ -288,6 +288,7 @@ on charger
     setprop persist.sys.usb.config mass_storage
     start hvdcp_opti
     start thermal-engine
+    start vendor.power_off_alarm
 
 service adsprpcd /system/vendor/bin/adsprpcd
     class main
