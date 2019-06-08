@@ -136,10 +136,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     LeEcoParts
 
-# LiveDisplay native
-PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@2.0-service-sysfs
-	
 # Dolby
 PRODUCT_COPY_FILES +=  \
     $(LOCAL_PATH)/audio/dax-default.xml:$(TARGET_COPY_OUT_VENDOR)/etc/dolby/dax-default.xml
