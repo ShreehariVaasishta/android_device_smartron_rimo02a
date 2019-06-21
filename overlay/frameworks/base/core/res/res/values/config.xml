@@ -52,8 +52,8 @@
          when adapting to brighter or darker environments.  This parameter controls how quickly
          brightness changes occur in response to an observed change in light level that exceeds the
          hysteresis threshold. -->
-    <integer name="config_autoBrightnessBrighteningLightDebounce">1000</integer>
-    <integer name="config_autoBrightnessDarkeningLightDebounce">2500</integer>
+    <integer name="config_autoBrightnessBrighteningLightDebounce">2000</integer>
+    <integer name="config_autoBrightnessDarkeningLightDebounce">4000</integer>
 
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
          The N entries of this array define N  1 zones as follows:
@@ -66,10 +66,10 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
-        <item>5</item>
         <item>8</item>
         <item>12</item>
         <item>20</item>
@@ -82,9 +82,8 @@
         <item>665</item>
         <item>1097</item>
         <item>1808</item>
+        <item>2981</item>
         <item>5000</item>
-        <item>8000</item>
-        <item>10000</item>
     </integer-array>
 
     <!-- Array of desired screen brightness in nits corresponding to the lux values
@@ -96,50 +95,6 @@
             - config_autoBrightnessLcdBacklightValues should not be defined
             - config_screenBrightnessNits must be defined
             - config_screenBrightnessBacklight must be defined
-    <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>20</item>
-        <item>22</item>
-        <item>24</item>
-        <item>26</item>
-        <item>28</item>
-        <item>30</item>
-        <item>33</item>
-        <item>35</item>
-        <item>40</item>
-        <item>45</item>
-        <item>50</item>
-        <item>70</item>
-        <item>90</item>
-        <item>110</item>
-        <item>120</item>
-        <item>130</item>
-        <item>160</item>
-        <item>180</item>
-        <item>225</item>
-        <item>255</item>
-    </integer-array>
-
-    <integer-array name="config_autoBrightnessButtonBacklightValues">
-        <item>20</item>
-        <item>22</item>
-        <item>25</item>
-        <item>26</item>
-        <item>28</item>
-        <item>30</item>
-        <item>33</item>
-        <item>35</item>
-        <item>45</item>
-        <item>50</item>
-        <item>70</item>
-        <item>90</item>
-        <item>110</item>
-        <item>120</item>
-        <item>130</item>
-        <item>160</item>
-        <item>180</item>
-        <item>225</item>
-        <item>255</item>
-    </integer-array>
 
          This array should have size one greater than the size of the config_autoBrightnessLevels
          array. The brightness values must be non-negative and non-decreasing. This must be
