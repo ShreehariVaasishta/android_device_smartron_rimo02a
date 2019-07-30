@@ -44,8 +44,8 @@
         <value>1747200</value>
         <value>1804800</value>
     </array>
-    <item name="cpu.idle">4.23</item>
-    <item name="cpu.awake">14.81</item>
+     <item name="cpu.suspend">5</item>
+     <item name="cpu.idle">20</item>
     <array name="cpu.core_power.cluster0">
         <value>12.21</value>
         <value>23.36</value>
