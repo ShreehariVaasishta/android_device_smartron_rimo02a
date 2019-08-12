@@ -471,7 +471,7 @@ int QCameraMemory::allocOneBuffer(QCameraMemInfo &memInfo,
 
     rc = ioctl(main_ion_fd, ION_IOC_ALLOC, &alloc);
     if (rc < 0) {
-        ALOGE("ION allocation of size <%d> failed: %s\n", alloc.len, strerror(errno));
+        ALOGE("ION allocation failed: %s\n", strerror(errno));
         goto ION_ALLOC_FAILED;
     }
 
@@ -634,7 +634,6 @@ int QCameraMemoryPool::findBufferLocked(
 {
     int rc = NAME_NOT_FOUND;
 
-    size_t alignsize = (size + 4095U) & (~4095U);
     if (mPools[streamType].empty()) {
         return NAME_NOT_FOUND;
     }
@@ -642,7 +641,7 @@ int QCameraMemoryPool::findBufferLocked(
     List<struct QCameraMemory::QCameraMemInfo>::iterator it = mPools[streamType].begin();
     if (streamType == CAM_STREAM_TYPE_OFFLINE_PROC) {
         for( ; it != mPools[streamType].end() ; it++) {
-            if( ((*it).size == alignsize) &&
+            if( ((*it).size == size) &&
                     ((*it).heap_id == heap_id) &&
                     ((*it).cached == cached) ) {
                 memInfo = *it;
@@ -1027,13 +1026,13 @@ int QCameraMetadataStreamMemory::getRegFlags(uint8_t *regFlags) const
  * RETURN     : none
  *==========================================================================*/
 QCameraStreamMemory::QCameraStreamMemory(camera_request_memory memory,
-        void *user,
+	void* cbCookie,
         bool cached,
         QCameraMemoryPool *pool,
-        cam_stream_type_t streamType, cam_stream_buf_type bufType)
+        cam_stream_type_t streamType, __unused cam_stream_buf_type bufType)
     :QCameraMemory(cached, pool, streamType),
      mGetMemory(memory),
-     mCallbackCookie(user)
+     mCallbackCookie(cbCookie)
 {
     for (int i = 0; i < MM_CAMERA_MAX_NUM_FRAMES; i ++)
         mCameraMemory[i] = NULL;
@@ -1259,9 +1258,9 @@ void *QCameraStreamMemory::getPtr(uint32_t index) const
  *
  * RETURN     : none
  *==========================================================================*/
-QCameraVideoMemory::QCameraVideoMemory(camera_request_memory memory,
-                                       void *user, bool cached, cam_stream_buf_type bufType)
-    : QCameraStreamMemory(memory, user, cached)
+QCameraVideoMemory::QCameraVideoMemory(camera_request_memory memory, void* cbCookie,
+                                       bool cached, cam_stream_buf_type bufType)
+    : QCameraStreamMemory(memory, cbCookie, cached)
 {
     memset(mMetadata, 0, sizeof(mMetadata));
 #ifdef USE_MEDIA_EXTENSIONS
@@ -1648,7 +1647,6 @@ int QCameraVideoMemory::closeNativeHandle(const void *data)
 int QCameraVideoMemory::closeNativeHandle(const void *data, bool metadata)
 {
     int32_t rc = NO_ERROR;
-    int32_t index = -1;
 
     if (metadata) {
         const media_metadata_buffer *packet = (const media_metadata_buffer*)data;
@@ -1791,16 +1789,16 @@ int QCameraVideoMemory::convCamtoOMXFormat(cam_format_t format)
  *
  * RETURN     : none
  *==========================================================================*/
-QCameraGrallocMemory::QCameraGrallocMemory(camera_request_memory memory, void *user)
+QCameraGrallocMemory::QCameraGrallocMemory(camera_request_memory memory, void* cbCookie)
         : QCameraMemory(true), mColorSpace(ITU_R_601_FR)
 {
     mMinUndequeuedBuffers = 0;
     mMappableBuffers = 0;
     mWindow = NULL;
     mWidth = mHeight = mStride = mScanline = mUsage = 0;
-    mDisplayFormat = HAL_PIXEL_FORMAT_YCrCb_420_SP;
+    mFormat = HAL_PIXEL_FORMAT_YCrCb_420_SP;
+    mCallbackCookie = cbCookie;
     mGetMemory = memory;
-    mCallbackCookie = user;
     for (int i = 0; i < MM_CAMERA_MAX_NUM_FRAMES; i ++) {
         mBufferHandle[i] = NULL;
         mLocalFlag[i] = BUFFER_NOT_OWNED;
@@ -1838,18 +1836,17 @@ QCameraGrallocMemory::~QCameraGrallocMemory()
  *
  * RETURN     : none
  *==========================================================================*/
-void QCameraGrallocMemory::setWindowInfo(preview_stream_ops_t *window, int width, int height,
-        int stride, int scanline, int format, int maxFPS, int usage, int backendFormat)
+void QCameraGrallocMemory::setWindowInfo(preview_stream_ops_t *window,
+        int width, int height, int stride, int scanline, int format, int maxFPS, int usage)
 {
     mWindow = window;
     mWidth = width;
     mHeight = height;
     mStride = stride;
     mScanline = scanline;
-    mDisplayFormat = format;
+    mFormat = format;
     mUsage = usage;
     setMaxFPS(maxFPS);
-    mCamFormat = backendFormat;
 }
 
 /*===========================================================================
@@ -1951,7 +1948,7 @@ int QCameraGrallocMemory::displayBuffer(uint32_t index)
                     mGetMemory(mPrivateHandle[dequeuedIdx]->fd,
                     (size_t)mPrivateHandle[dequeuedIdx]->size,
                     1,
-                    mCallbackCookie);
+                    (void *)this);
             CDBG_HIGH("%s: idx = %d, fd = %d, size = %d, offset = %d",
                     __func__, dequeuedIdx, mPrivateHandle[dequeuedIdx]->fd,
                     mPrivateHandle[dequeuedIdx]->size,
@@ -1985,7 +1982,6 @@ int QCameraGrallocMemory::displayBuffer(uint32_t index)
 int32_t QCameraGrallocMemory::enqueueBuffer(uint32_t index, nsecs_t timeStamp)
 {
     int32_t err = NO_ERROR;
-    int32_t dequeuedIdx = BAD_INDEX;
 
     if (BUFFER_NOT_OWNED == mLocalFlag[index]) {
         ALOGE("%s: buffer to be enqueued is not owned", __func__);
@@ -2026,7 +2022,6 @@ int32_t QCameraGrallocMemory::dequeueBuffer()
     int32_t dequeuedIdx = BAD_INDEX;
     buffer_handle_t *buffer_handle = NULL;
     int32_t stride = 0;
-    uint8_t dequeueCnt = 1;
 
     dequeuedIdx = BAD_INDEX;
     err = mWindow->dequeue_buffer(mWindow, &buffer_handle, &stride);
@@ -2070,7 +2065,7 @@ int32_t QCameraGrallocMemory::dequeueBuffer()
                     mGetMemory(mPrivateHandle[dequeuedIdx]->fd,
                     (size_t)mPrivateHandle[dequeuedIdx]->size,
                     1,
-                    mCallbackCookie);
+                    (void *)this);
             CDBG_HIGH("%s: idx = %d, fd = %d, size = %d, offset = %d",
                     __func__, dequeuedIdx, mPrivateHandle[dequeuedIdx]->fd,
                     mPrivateHandle[dequeuedIdx]->size,
@@ -2080,15 +2075,6 @@ int32_t QCameraGrallocMemory::dequeueBuffer()
                     (size_t)mPrivateHandle[dequeuedIdx]->size;
             mMemInfo[dequeuedIdx].handle = ion_info_fd.handle;
 
-            if (mCamFormat == CAM_FORMAT_Y_ONLY) {
-                // For mono sensor, assign the chroma pixel values to 128.
-                // Only Y data will be filled with valid data and UV pixels will be 128.
-                // 128 will be used for chroma to get the grayscale data.
-                void *cbcr_data = (void *)((uint8_t *)mCameraMemory[dequeuedIdx]->data
-                        + (mStride * mScanline));
-                size_t cbcr_len = mPrivateHandle[dequeuedIdx]->size - (mStride * mScanline);
-                memset(cbcr_data, 128, mPrivateHandle[dequeuedIdx]->size);
-            }
             mMappableBuffers++;
         }
     } else {
@@ -2147,9 +2133,17 @@ int QCameraGrallocMemory::allocate(uint8_t count, size_t /*size*/,
          goto end;
     }
 
-    err = mWindow->set_buffers_geometry(mWindow, mWidth, mHeight, mDisplayFormat);
+    err = mWindow->set_buffers_geometry(mWindow, mStride, mScanline, mFormat);
     if (err != 0) {
          ALOGE("%s: set_buffers_geometry failed: %s (%d)",
+               __func__, strerror(-err), -err);
+         ret = UNKNOWN_ERROR;
+         goto end;
+    }
+
+    err = mWindow->set_crop(mWindow, 0, 0, mWidth, mHeight);
+    if (err != 0) {
+         ALOGE("%s: set_crop failed: %s (%d)",
                __func__, strerror(-err), -err);
          ret = UNKNOWN_ERROR;
          goto end;
@@ -2166,7 +2160,7 @@ int QCameraGrallocMemory::allocate(uint8_t count, size_t /*size*/,
     }
     CDBG_HIGH("%s: usage = %d, geometry: %p, %d, %d, %d, %d, %d",
           __func__, gralloc_usage, mWindow, mWidth, mHeight, mStride,
-          mScanline, mDisplayFormat);
+          mScanline, mFormat);
 
     mBufferCount = count;
     if ((count < mMappableBuffers) || (mMappableBuffers == 0)) {
@@ -2268,15 +2262,6 @@ int QCameraGrallocMemory::allocate(uint8_t count, size_t /*size*/,
         mMemInfo[cnt].fd = mPrivateHandle[cnt]->fd;
         mMemInfo[cnt].size = (size_t)mPrivateHandle[cnt]->size;
         mMemInfo[cnt].handle = ion_info_fd.handle;
-        if (mCamFormat == CAM_FORMAT_Y_ONLY) {
-            // For mono sensor, assign the chroma pixel values to 128.
-            // Only Y data will be filled with valid data and UV pixels will be 128.
-            // 128 will be used for chroma to get the grayscale data.
-            void *cbcr_data = (void *)((uint8_t *)mCameraMemory[cnt]->data
-                    + (mStride * mScanline));
-            size_t cbcr_len = mPrivateHandle[cnt]->size - (mStride * mScanline);
-            memset(cbcr_data, 128, cbcr_len);
-        }
     }
 
     //Cancel min_undequeued_buffer buffers back to the window
