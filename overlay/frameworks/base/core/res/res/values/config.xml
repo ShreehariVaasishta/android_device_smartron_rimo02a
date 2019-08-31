@@ -576,7 +576,11 @@
     <!-- Max visible notification icons -->
     <integer name="config_maxVisibleNotificationIcons">7</integer>
     <integer name="config_maxVisibleNotificationIconsWhenDark">7</integer>
+
     <!-- Enable SmartPixels -->
     <bool name="config_enableSmartPixels">true</bool>
+
+    <!-- Whether or not to use Night Light -->
+    <bool name="config_nightDisplayAvailable">false</bool>
 
 </resources>
