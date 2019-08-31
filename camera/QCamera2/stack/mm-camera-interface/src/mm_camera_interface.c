@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2016, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -39,6 +39,7 @@
 #include <media/msm_cam_sensor.h>
 #include <cutils/properties.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define EXTRA_ENTRY 6
 
@@ -49,7 +50,7 @@
 
 static pthread_mutex_t g_intf_lock = PTHREAD_MUTEX_INITIALIZER;
 
-static mm_camera_ctrl_t g_cam_ctrl;
+static mm_camera_ctrl_t g_cam_ctrl; // = {0, {{0}}, {0}, {{0}}, {0}, {0}, {0}};
 
 static pthread_mutex_t g_handler_lock = PTHREAD_MUTEX_INITIALIZER;
 static uint16_t g_handler_history_count = 0; /* history count for handler */
@@ -57,6 +58,27 @@ volatile uint32_t gMmCameraIntfLogLevel = 1;
 
 #define CAM_SENSOR_TYPE_MASK (1U<<24) // 24th (starting from 0) bit tells its a MAIN or AUX camera
 #define CAM_SENSOR_FORMAT_MASK (1U<<25) // 25th(starting from 0) bit tells its YUV sensor or not
+
+nsecs_t getBootToMonoTimeOffset()
+{
+    // try three times to get the clock offset, choose the one
+    // with the minimum gap in measurements.
+    const int tries = 3;
+    int i;
+    nsecs_t bestGap, measured;
+    nsecs_t tmono, tbase, tmono2, gap;
+    for (i = 0; i < tries; ++i) {
+        tmono = systemTime(SYSTEM_TIME_MONOTONIC);
+        tbase = systemTime(SYSTEM_TIME_BOOTTIME);
+        tmono2 = systemTime(SYSTEM_TIME_MONOTONIC);
+        gap = tmono2 - tmono;
+        if (i == 0 || gap < bestGap) {
+            bestGap = gap;
+            measured = tbase - ((tmono + tmono2) >> 1);
+        }
+    }
+    return measured;
+}
 
 /*===========================================================================
  * FUNCTION   : mm_camera_util_generate_handler
@@ -1846,10 +1868,10 @@ uint8_t get_num_of_cameras()
     cfg.cfgtype = CFG_SINIT_PROBE_WAIT_DONE;
     cfg.cfg.setting = NULL;
     if (ioctl(sd_fd, VIDIOC_MSM_SENSOR_INIT_CFG, &cfg) < 0) {
-        CDBG("failed...Camera Daemon may not up so try again");
+        ALOGI("failed...Camera Daemon may not up so try again");
         for(i = 0; i < (MM_CAMERA_EVT_ENTRY_MAX + EXTRA_ENTRY); i++) {
             if (ioctl(sd_fd, VIDIOC_MSM_SENSOR_INIT_CFG, &cfg) < 0) {
-                CDBG("failed...Camera Daemon may not up so try again");
+                ALOGI("failed...Camera Daemon may not up so try again");
                 continue;
             }
             else

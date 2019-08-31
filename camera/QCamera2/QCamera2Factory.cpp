@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015, The Linux Foundataion. All rights reserved.
+/* Copyright (c) 2012-2016, The Linux Foundataion. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -76,7 +76,7 @@ QCamera2Factory::QCamera2Factory()
     int isHAL3Enabled = atoi(prop);
 
     // Signifies whether system has to enable dual camera mode
-    sprintf(propDefault, "%d", isDualCamAvailable(isHAL3Enabled));
+    snprintf(propDefault, PROPERTY_VALUE_MAX, "%d", isDualCamAvailable(isHAL3Enabled));
     property_get("persist.camera.dual.camera", prop, propDefault);
     bDualCamera = atoi(prop);
     CDBG_HIGH("%s[%d]: dualCamera:%d ", __func__, __LINE__, bDualCamera);
@@ -249,23 +249,6 @@ int QCamera2Factory::open_legacy(const struct hw_module_t* module,
         rc =  gQCamera2Factory->openLegacy(atoi(id), halVersion, device);
 
     return rc;
-}
-
-/*===========================================================================
- * FUNCTION   : set_torch_mode
- *
- * DESCRIPTION: Attempt to turn on or off the torch mode of the flash unit.
- *
- * PARAMETERS :
- *   @camera_id : camera ID
- *   @on        : Indicates whether to turn the flash on or off
- *
- * RETURN     : 0  -- success
- *              none-zero failure code
- *==========================================================================*/
-int QCamera2Factory::set_torch_mode(const char* camera_id, bool on)
-{
-    return gQCamera2Factory->setTorchMode(camera_id, on);
 }
 
 /*===========================================================================
@@ -498,79 +481,6 @@ int QCamera2Factory::openLegacy(
     }
 
     return rc;
-}
-
-/*===========================================================================
- * FUNCTION   : setTorchMode
- *
- * DESCRIPTION: Attempt to turn on or off the torch mode of the flash unit.
- *
- * PARAMETERS :
- *   @camera_id : camera ID
- *   @on        : Indicates whether to turn the flash on or off
- *
- * RETURN     : 0  -- success
- *              none-zero failure code
- *==========================================================================*/
-
-#define SYSFS_FLASH_PATH_BRIGHTNESS "/sys/class/leds/led:torch_0/brightness"
-#define SYSFS_FLASH_PATH_ENABLE "/sys/class/leds/led:switch/brightness"
-
-int QCamera2Factory::setTorchMode(__attribute__((unused)) const char* camera_id, bool on)
-{
-    int retVal(0);
-    int fd_brightness(-1);
-    int fd_enable(-1);
-    char buffer[16];
-
-    ALOGD("%s", __func__);
-
-    fd_brightness = open(SYSFS_FLASH_PATH_BRIGHTNESS, O_RDWR);
-    if (fd_brightness < 0) {
-        ALOGE("%s: failed to open '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_BRIGHTNESS);
-        return -EBADF;
-    }
-
-    fd_enable = open(SYSFS_FLASH_PATH_ENABLE, O_RDWR);
-    if (fd_enable < 0) {
-        ALOGE("%s: failed to open '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_ENABLE);
-        return -EBADF;
-    }
-
-    if (on) {
-        ALOGD("%s: on\n", __FUNCTION__);
-        int bytes = snprintf(buffer, sizeof(buffer), "255");
-        retVal = write(fd_brightness, buffer, (size_t)bytes);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_BRIGHTNESS);
-            return -EBADFD;
-        }
-
-        retVal = write(fd_enable, "1", 1);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_ENABLE);
-            return -EBADFD;
-        }
-    } else {
-        ALOGD("%s: off\n", __FUNCTION__);
-        int bytes = snprintf(buffer, sizeof(buffer), "0");
-        retVal = write(fd_brightness, buffer, (size_t)bytes);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_BRIGHTNESS);
-            return -EBADFD;
-        }
-
-        retVal = write(fd_enable, "0", 1);
-        if (retVal <= 0) {
-            ALOGE("%s: failed to write to '%s'\n", __FUNCTION__, SYSFS_FLASH_PATH_ENABLE);
-            return -EBADFD;
-        }
-    }
-    close(fd_brightness);
-    close(fd_enable);
-    retVal = 0;
-
-    return retVal;
 }
 
 /*===========================================================================

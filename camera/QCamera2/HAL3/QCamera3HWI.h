@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015, The Linux Foundataion. All rights reserved.
+/* Copyright (c) 2012-2016, The Linux Foundataion. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -30,11 +30,11 @@
 #ifndef __QCAMERA3HARDWAREINTERFACE_H__
 #define __QCAMERA3HARDWAREINTERFACE_H__
 
+#include <CameraMetadata.h>
 #include <pthread.h>
 #include <utils/List.h>
 #include <utils/KeyedVector.h>
 #include <hardware/camera3.h>
-#include <camera/CameraMetadata.h>
 #include "QCameraTrace.h"
 #include "QCamera3HALHeader.h"
 #include "QCamera3Channel.h"
@@ -56,9 +56,11 @@ extern "C" {
 #endif //#ifdef CDBG_HIGH
 #define CDBG_HIGH(fmt, args...) ALOGD_IF(gCamHal3LogLevel >= 1, fmt, ##args)
 
+using ::android::hardware::camera::common::V1_0::helper::CameraMetadata;
 using namespace android;
 
 namespace qcamera {
+
 
 #ifndef TRUE
 #define TRUE 1
@@ -69,7 +71,6 @@ namespace qcamera {
 #endif
 
 /* Time related macros */
-typedef int64_t nsecs_t;
 #define NSEC_PER_SEC 1000000000LLU
 #define NSEC_PER_USEC 1000LLU
 #define NSEC_PER_33MSEC 33000000LLU
@@ -172,7 +173,6 @@ public:
                             nsecs_t timestamp, int32_t request_id,
                             const CameraMetadata& jpegMetadata, uint8_t pipeline_depth,
                             uint8_t capture_intent, uint8_t fwk_cacMode);
-    static void patchCaps();
     int initParameters();
     void deinitParameters();
     QCamera3ReprocessChannel *addOfflineReprocChannel(const reprocess_config_t &config,
@@ -230,7 +230,7 @@ private:
     bool isSupportChannelNeeded(camera3_stream_configuration_t *streamList);
     int32_t setMobicat();
 
-    int32_t getSensorOutputSize(cam_dimension_t &sensor_dim);
+    int32_t getSensorOutputSize(cam_dimension_t &sensor_dim, CameraMetadata *frame_settings = NULL);
     int32_t setHalFpsRange(const CameraMetadata &settings,
             metadata_buffer_t *hal_metadata);
     int32_t extractSceneMode(const CameraMetadata &frame_settings, uint8_t metaMode,
@@ -272,6 +272,7 @@ private:
     bool m_bEisEnable;
     uint8_t m_MobicatMask;
     uint8_t m_bTnrEnabled;
+    uint8_t mSupportedFaceDetectMode;
 
     /* Data structure to store pending request */
     typedef struct {
@@ -390,6 +391,9 @@ private:
     void *lib_surface_utils;
     int (*LINK_get_surface_pixel_alignment)();
     uint32_t mSurfaceStridePadding;
+    cam_fps_range_t mFpsRange;
+    //The offset between BOOTTIME and MONOTONIC timestamps
+    nsecs_t mBootToMonoTimestampOffset;
 };
 
 }; // namespace qcamera

@@ -749,6 +749,9 @@ void QCamera2HardwareInterface::synchronous_stream_cb_routine(
             mPreviewTimestamp = frameTime;
         }
     }
+    // Convert Boottime from camera to Monotime for display if needed.
+    // Otherwise, mBootToMonoTimestampOffset value will be 0.
+    mPreviewTimestamp = mPreviewTimestamp - pme->mBootToMonoTimestampOffset;
     stream->mStreamTimestamp = frameTime;
 #endif
     memory = (QCameraGrallocMemory *)super_frame->bufs[0]->mem_info;
@@ -967,7 +970,8 @@ int32_t QCamera2HardwareInterface::sendPreviewCallback(QCameraStream *stream,
         (previewFmt == CAM_FORMAT_YUV_420_NV12) ||
         (previewFmt == CAM_FORMAT_YUV_420_YV12) ||
         (previewFmt == CAM_FORMAT_YUV_420_NV12_VENUS) ||
-        (previewFmt == CAM_FORMAT_YUV_420_NV21_VENUS)) {
+        (previewFmt == CAM_FORMAT_YUV_420_NV21_VENUS) ||
+        ((isMonoCamera()) && (previewFmt == CAM_FORMAT_Y_ONLY))) {
         if(previewFmt == CAM_FORMAT_YUV_420_YV12) {
             yStride = streamInfo->buf_planes.plane_info.mp[0].stride;
             yScanline = streamInfo->buf_planes.plane_info.mp[0].scanline;
@@ -1389,9 +1393,16 @@ void QCamera2HardwareInterface::video_stream_cb_routine(mm_camera_super_buf_t *s
     if (frame->buf_type == CAM_STREAM_BUF_TYPE_MPLANE) {
         nsecs_t timeStamp;
         timeStamp = nsecs_t(frame->ts.tv_sec) * 1000000000LL + frame->ts.tv_nsec;
+#ifdef USE_MEDIA_EXTENSIONS
+        // For VT usecase, ISP uses AVtimer not CLOCK_BOOTTIME as time source.
+        // So do not change video timestamp.
+        if (!pme->mParameters.isAVTimerEnabled()) {
+            // Convert Boottime from camera to Monotime for video if needed.
+            // Otherwise, mBootToMonoTimestampOffset value will be 0.
+            timeStamp = timeStamp - pme->mBootToMonoTimestampOffset;
+        }
         CDBG("Send Video frame to services/encoder TimeStamp : %lld",
             timeStamp);
-#ifdef USE_MEDIA_EXTENSIONS
         videoMemObj = (QCameraVideoMemory *)frame->mem_info;
 #else
         videoMemObj = (QCameraMemory *)frame->mem_info;
@@ -1400,6 +1411,7 @@ void QCamera2HardwareInterface::video_stream_cb_routine(mm_camera_super_buf_t *s
         if (NULL != videoMemObj) {
             video_mem = videoMemObj->getMemory(frame->buf_idx,
                     (pme->mStoreMetaDataInFrame > 0)? true : false);
+            CDBG("Video frame TimeStamp : %lld batch = 0 index=%d",timeStamp,frame->buf_idx);
         }
         if (NULL != videoMemObj && NULL != video_mem) {
             pme->dumpFrameToFile(stream, frame, QCAMERA_DUMP_FRM_VIDEO);
@@ -1482,6 +1494,15 @@ void QCamera2HardwareInterface::video_stream_cb_routine(mm_camera_super_buf_t *s
                 cbArg.cb_type = QCAMERA_DATA_TIMESTAMP_CALLBACK;
                 cbArg.msg_type = CAMERA_MSG_VIDEO_FRAME;
                 cbArg.data = video_mem;
+
+                // For VT usecase, ISP uses AVtimer not CLOCK_BOOTTIME as time source.
+                // So do not change video timestamp.
+                if (!pme->mParameters.isAVTimerEnabled()) {
+                    // Convert Boottime from camera to Monotime for video if needed.
+                    // Otherwise, mBootToMonoTimestampOffset value will be 0.
+                    timeStamp = timeStamp - pme->mBootToMonoTimestampOffset;
+                }
+                CDBG("Final video buffer TimeStamp : %lld ", timeStamp);
                 cbArg.timestamp = timeStamp;
                 int32_t rc = pme->m_cbNotifier.notifyCallback(cbArg);
                 if (rc != NO_ERROR) {
@@ -2371,8 +2392,8 @@ void QCamera2HardwareInterface::dumpJpegToFile(const void *data,
                 if (file_fd >= 0) {
                     ssize_t written_len = write(file_fd, data, size);
                     fchmod(file_fd, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-                    CDBG_HIGH("%s: written number of bytes %ld\n",
-                            __func__, (long)written_len);
+                    CDBG_HIGH("%s: written number of bytes %zd\n",
+                            __func__, written_len);
                     close(file_fd);
                 } else {
                     ALOGE("%s: fail t open file for image dumping", __func__);
@@ -2620,7 +2641,7 @@ void QCamera2HardwareInterface::dumpFrameToFile(QCameraStream *stream,
                         }
 
                         CDBG_HIGH("%s: written number of bytes %ld\n",
-                            __func__, (long)written_len);
+                            __func__, written_len);
                         close(file_fd);
                     } else {
                         ALOGE("%s: fail t open file for image dumping", __func__);
@@ -2963,7 +2984,7 @@ void * QCameraCbNotifier::cbNotifyRoutine(void * data)
                                     }
                                     if (pme->mJpegCb) {
                                         ALOGI("%s: Calling JPEG Callback!! for camera %d"
-                                                "release_data %p"
+                                                "release_data %p",
                                                 "frame_idx %d",
                                                 __func__, pme->mParent->getCameraId(),
                                                 cb->user_data,

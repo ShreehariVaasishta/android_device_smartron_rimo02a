@@ -1,6 +1,6 @@
 /*
 ** Copyright 2008, The Android Open Source Project
-** Copyright (c) 2012-2015, The Linux Foundation. All rights reserved.
+** Copyright (c) 2012-2016, The Linux Foundation. All rights reserved.
 ** Not a Contribution. Apache license notifications and license are
 ** retained for attribution purposes only.
 **
@@ -19,7 +19,7 @@
 #ifndef ANDROID_HARDWARE_QCAMERA_PARAMETERS_H
 #define ANDROID_HARDWARE_QCAMERA_PARAMETERS_H
 
-#include <camera/CameraParameters.h>
+#include <CameraParameters.h>
 #include <cutils/properties.h>
 #include <hardware/camera.h>
 #include <stdlib.h>
@@ -33,6 +33,8 @@ extern "C" {
 #include <mm_jpeg_interface.h>
 }
 
+using ::android::hardware::camera::common::V1_0::helper::CameraParameters;
+using ::android::hardware::camera::common::V1_0::helper::Size;
 using namespace android;
 
 namespace qcamera {
@@ -84,8 +86,10 @@ private:
     size_t checkScaleSizeTable(size_t scale_cnt, cam_dimension_t *scale_tbl,
             size_t org_cnt, cam_dimension_t *org_tbl);
 
+    QCameraParameters *mParent;
     bool mScaleEnabled;
     bool mIsUnderScaling;   //if in scale status
+    bool mScaleDirection;   // 0: Upscaling; 1: Downscaling
 
     // picture size cnt that need scale operation
     size_t mNeedScaleCnt;
@@ -213,6 +217,7 @@ public:
     static const char KEY_QC_LONG_SHOT[];
     static const char KEY_QC_INSTANT_AEC[];
     static const char KEY_QC_INSTANT_CAPTURE[];
+    static const char KEY_QC_INITIAL_EXPOSURE_INDEX[];
 
     static const char KEY_QC_MANUAL_FOCUS_POSITION[];
     static const char KEY_QC_MANUAL_FOCUS_POS_TYPE[];
@@ -822,6 +827,8 @@ public:
             cam_related_system_calibration_data_t* calib);
     int32_t bundleRelatedCameras(bool sync, uint32_t sessionid);
     int32_t setInstantAEC(uint8_t enable, bool initCommit);
+    bool isFDInVideoEnabled();
+    int32_t checkFeatureConcurrency();
 private:
     int32_t setPreviewSize(const QCameraParameters& );
     int32_t setVideoSize(const QCameraParameters& );
@@ -900,6 +907,7 @@ private:
     int32_t setCDSMode(const QCameraParameters& params);
     int32_t setInstantCapture(const QCameraParameters& params);
     int32_t setInstantAEC(const QCameraParameters& params);
+    int32_t setInitialExposureIndex(const QCameraParameters& params);
     int32_t setMobicat(const QCameraParameters& params);
     int32_t setRdiMode(const QCameraParameters& );
     int32_t setSecureMode(const QCameraParameters& );

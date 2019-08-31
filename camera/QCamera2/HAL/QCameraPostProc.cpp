@@ -518,12 +518,18 @@ int32_t QCameraPostProcessor::getJpegEncodingConfig(mm_jpeg_encode_params_t& enc
         // (0,0) means no thumbnail
         m_bThumbnailNeeded = FALSE;
     }
-    encode_parm.encode_thumbnail = m_bThumbnailNeeded;
 
     // get color format
     cam_format_t img_fmt = CAM_FORMAT_YUV_420_NV12;
     main_stream->getFormat(img_fmt);
     encode_parm.color_format = getColorfmtFromImgFmt(img_fmt);
+
+    // For Mono camera, thumbnail is not needed.
+    // as hybrid jpeg encoding not supported.for Y ONLY format.
+    if (img_fmt == CAM_FORMAT_Y_ONLY) {
+        m_bThumbnailNeeded = FALSE;
+    }
+    encode_parm.encode_thumbnail = m_bThumbnailNeeded;
 
     // get jpeg quality
     uint32_t val = m_parent->getJpegQuality();
@@ -558,6 +564,7 @@ int32_t QCameraPostProcessor::getJpegEncodingConfig(mm_jpeg_encode_params_t& enc
     }
 
     if (m_bThumbnailNeeded == TRUE) {
+        uint32_t jpeg_rotation = m_parent->mParameters.getJpegRotation();
         m_parent->getThumbnailSize(encode_parm.thumb_dim.dst_dim);
 
         if (thumb_stream == NULL) {
@@ -807,6 +814,8 @@ bool QCameraPostProcessor::validatePostProcess(mm_camera_super_buf_t *frame)
  *==========================================================================*/
 int32_t QCameraPostProcessor::processData(mm_camera_super_buf_t *frame)
 {
+    QCameraChannel *m_pReprocChannel = NULL;
+
     if (m_bInited == FALSE) {
         ALOGE("%s: postproc not initialized yet", __func__);
         return UNKNOWN_ERROR;
@@ -1650,6 +1659,8 @@ mm_jpeg_color_format QCameraPostProcessor::getColorfmtFromImgFmt(cam_format_t im
         return MM_JPEG_COLOR_FORMAT_YCRCBLP_H2V1;
     case CAM_FORMAT_YUV_422_NV16:
         return MM_JPEG_COLOR_FORMAT_YCBCRLP_H2V1;
+    case CAM_FORMAT_Y_ONLY:
+        return MM_JPEG_COLOR_FORMAT_MONOCHROME;
     default:
         return MM_JPEG_COLOR_FORMAT_YCRCBLP_H2V2;
     }
@@ -2540,13 +2551,13 @@ void *QCameraPostProcessor::dataSaveRoutine(void *data)
                         ssize_t written_len = write(file_fd, job_data->out_data.buf_vaddr,
                                 job_data->out_data.buf_filled_len);
                         if ((ssize_t)job_data->out_data.buf_filled_len != written_len) {
-                            ALOGE("%s: Failed save complete data %ld bytes "
+                            ALOGE("%s: Failed save complete data %d bytes "
                                   "written instead of %d bytes!",
-                                  __func__, (long)written_len,
+                                  __func__, written_len,
                                   job_data->out_data.buf_filled_len);
                         } else {
-                            CDBG_HIGH("%s: written number of bytes %ld\n",
-                                __func__, (long)written_len);
+                            CDBG_HIGH("%s: written number of bytes %d\n",
+                                __func__, written_len);
                         }
 
                         close(file_fd);
@@ -2809,6 +2820,7 @@ int32_t QCameraPostProcessor::doReprocess()
     QCameraStream *pMetaStream = NULL;
     uint8_t meta_buf_index = 0;
     mm_camera_buf_def_t *meta_buf = NULL;
+    bool found_meta = FALSE;
 
     qcamera_pp_request_t *ppreq_job = (qcamera_pp_request_t *)m_inputPPQ.peek();
     if ((ppreq_job == NULL) || (ppreq_job->src_frame == NULL)) {

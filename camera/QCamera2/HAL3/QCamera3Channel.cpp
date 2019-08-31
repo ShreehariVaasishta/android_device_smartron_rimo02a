@@ -34,12 +34,13 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <hardware/camera3.h>
 #include <system/camera_metadata.h>
 #include <gralloc_priv.h>
 #include <utils/Log.h>
 #include <utils/Errors.h>
+#include <utils/Timers.h>
+#include <sys/stat.h>
 #include <cutils/properties.h>
 #include "QCamera3Channel.h"
 #include "QCamera3HWI.h"
@@ -51,8 +52,6 @@ using namespace android;
 namespace qcamera {
 static const char ExifAsciiPrefix[] =
     { 0x41, 0x53, 0x43, 0x49, 0x49, 0x0, 0x0, 0x0 };          // "ASCII\0\0\0"
-
-__unused
 static const char ExifUndefinedPrefix[] =
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };   // "\0\0\0\0\0\0\0\0"
 
@@ -527,7 +526,7 @@ void QCamera3Channel::dumpYUV(mm_camera_buf_def_t *frame, cam_dimension_t dim,
                         }
                     }
                     CDBG_HIGH("%s: written number of bytes %ld\n",
-                             __func__, (long)written_len);
+                             __func__, written_len);
                     dumpFrmCnt++;
                     close(file_fd);
                 } else {
@@ -1267,7 +1266,7 @@ void QCamera3RawChannel::dumpRawSnapshot(mm_camera_buf_def_t *frame)
        int file_fd = open(buf, O_RDWR| O_CREAT, 0644);
        if (file_fd >= 0) {
           ssize_t written_len = write(file_fd, frame->buffer, frame->frame_len);
-          ALOGE("%s: written number of bytes %ld", __func__, (long)written_len);
+          ALOGE("%s: written number of bytes %zd", __func__, written_len);
           close(file_fd);
        } else {
           ALOGE("%s: failed to open file to dump image", __func__);
@@ -1464,7 +1463,7 @@ void QCamera3RawDumpChannel::dumpRawSnapshot(mm_camera_buf_def_t *frame)
             if (file_fd >= 0) {
                 ssize_t written_len =
                         write(file_fd, frame->buffer, offset.frame_len);
-                CDBG("%s: written number of bytes %ld", __func__, (long)written_len);
+                CDBG("%s: written number of bytes %zd", __func__, written_len);
                 close(file_fd);
             } else {
                 ALOGE("%s: failed to open file to dump image", __func__);
@@ -1491,7 +1490,7 @@ void QCamera3RawDumpChannel::dumpRawSnapshot(mm_camera_buf_def_t *frame)
  * RETURN          : NA
  *==========================================================================*/
 void QCamera3RawDumpChannel::streamCbRoutine(mm_camera_super_buf_t *super_frame,
-                                                __unused QCamera3Stream *stream)
+                                                __attribute__((unused)) QCamera3Stream *stream)
 {
     CDBG("%s: E",__func__);
     if (super_frame == NULL || super_frame->num_bufs != 1) {
@@ -2521,21 +2520,17 @@ int32_t getExifLatitude(rat_t *latitude,
 {
     char str[30];
     snprintf(str, sizeof(str), "%f", value);
-    if(str[0] != '\0') {
-        parseGPSCoordinate(str, latitude);
+	parseGPSCoordinate(str, latitude);
 
-        //set Latitude Ref
-        float latitudeValue = strtof(str, 0);
-        if(latitudeValue < 0.0f) {
-            latRef[0] = 'S';
-        } else {
-            latRef[0] = 'N';
-        }
-        latRef[1] = '\0';
-        return NO_ERROR;
-    }else{
-        return BAD_VALUE;
-    }
+	//set Latitude Ref
+	float latitudeValue = strtof(str, 0);
+	if(latitudeValue < 0.0f) {
+		latRef[0] = 'S';
+	} else {
+		latRef[0] = 'N';
+	}
+	latRef[1] = '\0';
+	return NO_ERROR;
 }
 
 /*===========================================================================
@@ -2556,21 +2551,17 @@ int32_t getExifLongitude(rat_t *longitude,
 {
     char str[30];
     snprintf(str, sizeof(str), "%f", value);
-    if(str[0] != '\0') {
-        parseGPSCoordinate(str, longitude);
+    parseGPSCoordinate(str, longitude);
 
-        //set Longitude Ref
-        float longitudeValue = strtof(str, 0);
-        if(longitudeValue < 0.0f) {
-            lonRef[0] = 'W';
-        } else {
-            lonRef[0] = 'E';
-        }
-        lonRef[1] = '\0';
-        return NO_ERROR;
-    }else{
-        return BAD_VALUE;
+    //set Longitude Ref
+    float longitudeValue = strtof(str, 0);
+    if(longitudeValue < 0.0f) {
+        lonRef[0] = 'W';
+    } else {
+        lonRef[0] = 'E';
     }
+    lonRef[1] = '\0';
+    return NO_ERROR;
 }
 
 /*===========================================================================
@@ -2591,7 +2582,6 @@ int32_t getExifAltitude(rat_t *altitude, char *altRef, double argValue)
 {
     char str[30];
     snprintf(str, sizeof(str), "%f", argValue);
-    if (str[0] != '\0') {
         double value = atof(str);
         *altRef = 0;
         if(value < 0){
@@ -2599,9 +2589,6 @@ int32_t getExifAltitude(rat_t *altitude, char *altRef, double argValue)
             value = -value;
         }
         return getRational(altitude, (int)(value * 1000), 1000);
-    } else {
-        return BAD_VALUE;
-    }
 }
 
 /*===========================================================================
@@ -2624,23 +2611,19 @@ int32_t getExifGpsDateTimeStamp(char *gpsDateStamp,
 {
     char str[30];
     snprintf(str, sizeof(str), "%lld", (long long int)value);
-    if (str[0] != '\0') {
-        time_t unixTime = (time_t)atol(str);
-        struct tm *UTCTimestamp = gmtime(&unixTime);
-        if (UTCTimestamp != NULL) {
-            strftime(gpsDateStamp, bufLen, "%Y:%m:%d", UTCTimestamp);
+	time_t unixTime = (time_t)atol(str);
+	struct tm *UTCTimestamp = gmtime(&unixTime);
+	if (UTCTimestamp != NULL) {
+		strftime(gpsDateStamp, bufLen, "%Y:%m:%d", UTCTimestamp);
 
-            getRational(&gpsTimeStamp[0], UTCTimestamp->tm_hour, 1);
-            getRational(&gpsTimeStamp[1], UTCTimestamp->tm_min, 1);
-            getRational(&gpsTimeStamp[2], UTCTimestamp->tm_sec, 1);
-            return NO_ERROR;
-        } else {
-            ALOGE("%s: Could not get the timestamp", __func__);
-            return BAD_VALUE;
-        }
-    } else {
-        return BAD_VALUE;
-    }
+		getRational(&gpsTimeStamp[0], UTCTimestamp->tm_hour, 1);
+		getRational(&gpsTimeStamp[1], UTCTimestamp->tm_min, 1);
+		getRational(&gpsTimeStamp[2], UTCTimestamp->tm_sec, 1);
+		return NO_ERROR;
+	} else {
+		ALOGE("%s: Could not get the timestamp", __func__);
+		return BAD_VALUE;
+	}
 }
 
 int32_t getExifExposureValue(srat_t* exposure_val, int32_t exposure_comp,
@@ -2672,8 +2655,8 @@ QCamera3Exif *QCamera3PicChannel::getExifData(metadata_buffer_t *metadata,
     uint32_t count = 0;
 
     // add exif entries
-    String8 dateTime;
-    String8 subsecTime;
+    String8 dateTime("");
+    String8 subsecTime("");
     rc = getExifDateTime(dateTime, subsecTime);
     if (rc == NO_ERROR) {
         exif->addEntry(EXIFTAGID_DATE_TIME, EXIF_ASCII,
@@ -3166,17 +3149,17 @@ int32_t QCamera3ReprocessChannel::unmapOfflineBuffers(bool all)
         if (!mOfflineBuffers.empty()) {
             QCamera3Stream *stream = NULL;
             List<OfflineBuffer>::iterator it = mOfflineBuffers.begin();
-            for (; it != mOfflineBuffers.end(); it++) {
+           for (; it != mOfflineBuffers.end(); it++) {
                stream = (*it).stream;
                if (NULL != stream) {
                    rc = stream->unmapBuf((*it).type,
                                          (*it).index,
                                             -1);
                    if (NO_ERROR != rc) {
-                       ALOGE("%s: Error during offline buffer unmap %d",
-                             __func__, rc);
+                       ALOGE("Error during offline buffer unmap %d",
+                              rc);
                    }
-                   CDBG("%s: Unmapped buffer with index %d", __func__, (*it).index);
+                   CDBG("Unmapped buffer with index %d", (*it).index);
                }
                if (!all) {
                    mOfflineBuffers.erase(it);
@@ -3200,10 +3183,10 @@ int32_t QCamera3ReprocessChannel::unmapOfflineBuffers(bool all)
                                      (*it).index,
                                         -1);
                if (NO_ERROR != rc) {
-                   ALOGE("%s: Error during offline buffer unmap %d",
-                         __func__, rc);
+                   ALOGE("Error during offline buffer unmap %d",
+                          rc);
                }
-               CDBG("%s: Unmapped meta buffer with index %d", __func__, (*it).index);
+               CDBG("Unmapped meta buffer with index %d", (*it).index);
            }
            if (!all) {
                mOfflineMetaBuffers.erase(it);
@@ -3443,7 +3426,6 @@ int32_t QCamera3ReprocessChannel::extractCrop(qcamera_fwk_input_pp_data_t *frame
         mappedBuffer.index = buf_idx;
         mappedBuffer.stream = pStream;
         mappedBuffer.type = CAM_MAPPING_BUF_TYPE_OFFLINE_INPUT_BUF;
-        Mutex::Autolock lock(mOfflineBuffersLock);
         mOfflineBuffers.push_back(mappedBuffer);
         mOfflineBuffersIndex = (int32_t)buf_idx;
         CDBG("%s: Mapped buffer with index %d", __func__, mOfflineBuffersIndex);
@@ -3463,7 +3445,6 @@ int32_t QCamera3ReprocessChannel::extractCrop(qcamera_fwk_input_pp_data_t *frame
         mappedBuffer.index = meta_buf_idx;
         mappedBuffer.stream = pStream;
         mappedBuffer.type = CAM_MAPPING_BUF_TYPE_OFFLINE_META_BUF;
-        Mutex::Autolock lock(mOfflineMetaBuffersLock);
         mOfflineMetaBuffers.push_back(mappedBuffer);
         mOfflineMetaIndex = (int32_t)meta_buf_idx;
         CDBG("%s: Mapped meta buffer with index %d", __func__, mOfflineMetaIndex);
