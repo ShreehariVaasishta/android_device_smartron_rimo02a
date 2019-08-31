@@ -232,7 +232,6 @@ persist.sys.usb.config=adb
 persist.sys.usb.config.extra=none 
 
 # GCAM Fixes
-persist.camera.HAL3.enabled=1
 persist.camera.eis.enable=1
 camera.eis.enable=1
 persist.camera.is_mode=4
