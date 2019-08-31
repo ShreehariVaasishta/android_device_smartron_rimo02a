@@ -14,4 +14,4 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/dot_rimo02a.mk
+    $(LOCAL_DIR)/superior_rimo02a.mk
