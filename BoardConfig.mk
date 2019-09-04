@@ -59,6 +59,7 @@ TARGET_KERNEL_CONFIG := lineageos_rimo02a_defconfig
 
 # APEX image
 DEXPREOPT_GENERATE_APEX_IMAGE := true
+TARGET_FLATTEN_APEX := true
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
