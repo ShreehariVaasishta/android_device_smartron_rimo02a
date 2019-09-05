@@ -259,4 +259,5 @@ camera.notify_nfc=1
 #ro.com.google.clientidbase.ms=android-smartron
 #ro.com.google.clientidbase.yt=android-smartron
 
-
+# Rescue party
+persist.sys.disable_rescue=true
