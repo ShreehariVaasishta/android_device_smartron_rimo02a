@@ -39,6 +39,7 @@ LOCAL_SRC_FILES += \
 
 LOCAL_CFLAGS := -Wall -Wextra -Wno-error
 LOCAL_CFLAGS += -DHAS_MULTIMEDIA_HINTS
+LOCAL_CFLAGS += -Wno-unused-variable -Wno-unused-parameter -Wno-implicit-fallthrough
 
 #use media extension
 ifeq ($(TARGET_USES_MEDIA_EXTENSIONS), true)

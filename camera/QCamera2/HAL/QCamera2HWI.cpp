@@ -29,6 +29,8 @@
 
 #define LOG_TAG "QCamera2HWI"
 
+#define VANILLA_HAL
+
 #include <utils/Log.h>
 #include <cutils/properties.h>
 #include <hardware/camera.h>

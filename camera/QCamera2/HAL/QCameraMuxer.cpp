@@ -29,6 +29,9 @@
 
 #define ALOG_NIDEBUG 0
 #define LOG_TAG "QCameraMuxer"
+
+#define VANILLA_HAL
+
 #include <utils/Log.h>
 #include <utils/threads.h>
 #include <fcntl.h>
