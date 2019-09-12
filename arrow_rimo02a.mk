@@ -17,13 +17,12 @@
 # Inherit device configuration
 $(call inherit-product, device/smartron/rimo02a/full_rimo02a.mk)
 
-# Inherit some common SuperiorOS stuff.
-TARGET_BOOT_ANIMATION_RES := 1080
-$(call inherit-product, vendor/superior/config/common.mk)
+# Inherit some common ArrowOS stuff.
+$(call inherit-product, vendor/arrow/config/common.mk)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := rimo02a
-PRODUCT_NAME := superior_rimo02a
+PRODUCT_NAME := arrow_rimo02a
 PRODUCT_BRAND := smartron
 TARGET DEVICE := rimo02a
 PRODUCT_MANUFACTURER := smartron
