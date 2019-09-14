@@ -115,9 +115,6 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 BACKLIGHT_PATH := "/sys/class/leds/lcd-backlight/brightness"
 BLINK_PATH := "/sys/class/leds/red/blink"
 
-# CNE
-BOARD_USES_QCNE := true
-
 # CSVT
 TARGET_USES_CSVT := true
 
