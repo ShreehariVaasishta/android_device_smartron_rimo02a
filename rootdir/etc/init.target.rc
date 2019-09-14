@@ -246,7 +246,7 @@ service hvdcp_opti /system/vendor/bin/hvdcp_opti
 service per_mgr /system/vendor/bin/pm-service
     class core
     user system
-    group system
+    group system net_raw
 
 service vendor.per_proxy /system/vendor/bin/pm-proxy
     class core
