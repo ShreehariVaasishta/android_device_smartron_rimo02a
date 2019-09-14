@@ -57,6 +57,9 @@ TARGET_KERNEL_SOURCE := kernel/smartron/msm8976
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 TARGET_KERNEL_CONFIG := lineageos_rimo02a_defconfig
 
+# APEX image
+DEXPREOPT_GENERATE_APEX_IMAGE := true
+
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "vfs-prerelease"
 
