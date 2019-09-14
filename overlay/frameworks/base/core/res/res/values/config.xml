@@ -44,9 +44,6 @@
          that can be set by the user. -->
     <integer name="config_screenBrightnessDoze">5</integer>
 
-    <!-- Whether the display blanks itself when going from a doze to a non-doze state -->
-    <bool name="config_displayBlanksAfterDoze">true</bool>
-
     <!-- Stability requirements in milliseconds for accepting a new brightness level.  This is used
          for debouncing the light sensor.  Different constants are used to debounce the light sensor
          when adapting to brighter or darker environments.  This parameter controls how quickly
