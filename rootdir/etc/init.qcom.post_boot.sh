@@ -67,7 +67,6 @@ echo 0 >  /sys/module/lowmemorykiller/parameters/lmk_fast_run
 echo 512 > /sys/module/process_reclaim/parameters/per_swap_size
 echo 0 > /sys/module/vmpressure/parameters/allocstall_threshold
 echo 35  > /proc/sys/vm/swappiness
-echo 0 > /proc/sys/vm/page-cluster
 
 echo 81250 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
 echo 1 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
