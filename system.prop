@@ -253,9 +253,9 @@ ro.camera.notify_nfc=1
 camera.notify_nfc=1
 
 # Play store
-ro.com.google.clientidbase.am=android-smartron
-ro.com.google.clientidbase.gmm=android-smartron
-ro.com.google.clientidbase.ms=android-smartron
-ro.com.google.clientidbase.yt=android-smartron
+#ro.com.google.clientidbase.am=android-smartron
+#ro.com.google.clientidbase.gmm=android-smartron
+#ro.com.google.clientidbase.ms=android-smartron
+#ro.com.google.clientidbase.yt=android-smartron
 
 
