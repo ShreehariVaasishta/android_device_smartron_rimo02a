@@ -235,6 +235,9 @@ TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 # Enable real time lockscreen charging current values
 BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
+# Root Directories
+BOARD_ROOT_EXTRA_FOLDERS := dsp firmware persist
+
 # Telephony
 TARGET_USES_ALTERNATIVE_MANUAL_NETWORK_SELECT := true
 
