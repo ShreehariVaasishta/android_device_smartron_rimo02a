@@ -231,7 +231,8 @@ TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 # Enable real time lockscreen charging current values
 BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
-# Root Directories
+# Root Directories & Symlinks
+BOARD_ROOT_EXTRA_FOLDERS := persist
 BOARD_ROOT_EXTRA_SYMLINKS := \
     /vendor/dsp:/dsp \
     /vendor/firmware_mnt:/firmware
