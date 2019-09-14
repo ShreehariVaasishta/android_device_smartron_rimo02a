@@ -237,7 +237,6 @@ BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
 
 # Root Directories
 BOARD_ROOT_EXTRA_SYMLINKS := \
-    /mnt/vendor/persist:/persist \
     /vendor/dsp:/dsp \
     /vendor/firmware_mnt:/firmware
 
