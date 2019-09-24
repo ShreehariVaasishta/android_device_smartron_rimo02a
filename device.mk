@@ -226,7 +226,13 @@ PRODUCT_COPY_FILES += \
 
 # IMS
 PRODUCT_PACKAGES += \
-    ims-ext-common
+    ims-ext-common \
+    ims_ext_common.xml
+
+# Telephony
+PRODUCT_PACKAGES += telephony-ext \
+    qti-telephony-hidl-wrapper \
+    qti_telephony_hidl_wrapper.xml
 
 # IPA Manager
 # PRODUCT_PACKAGES += \
