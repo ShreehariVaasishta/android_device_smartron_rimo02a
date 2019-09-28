@@ -184,8 +184,12 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/ad_calib.cfg:$(TARGET_COPY_OUT_SYSTEM)/etc/ad_calib.cfg
 
 # Doze mode
+#PRODUCT_PACKAGES += \
+#    Doze
+
+# Fingerprint Sensor
 PRODUCT_PACKAGES += \
-    Doze
+    android.hardware.biometrics.fingerprint@2.1-service
 
 # For android_filesystem_config.h
 PRODUCT_PACKAGES += \
