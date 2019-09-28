@@ -191,15 +191,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
      fs_config_files
 
-# Fake logprint for fingerprint libs
-PRODUCT_PACKAGES += \
-    fakelogprint
-
-
-# Fingerprint
-PRODUCT_PACKAGES += \
-    fingerprint.msm8952
-
 # GPS
 PRODUCT_PACKAGES += \
     gps.msm8952 \
