@@ -88,7 +88,8 @@ PRODUCT_PACKAGES += \
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power@1.1-service-qti
+    android.hardware.power@1.1-service-qti \
+    android.hardware.power.stats@1.0-service.mock
 
 # RenderScript
 PRODUCT_PACKAGES += \
