@@ -14,10 +14,10 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/arrow_rimo02a.mk
+    $(LOCAL_DIR)/aosp_rimo02a.mk
 
 COMMON_LUNCH_CHOICES := \
-    arrow_rimo02a-user \
-    arrow_rimo02a-userdebug \
-    arrow_rimo02a-eng
+    aosp_rimo02a-user \
+    aosp_rimo02a-userdebug \
+    aosp_rimo02a-eng
 
