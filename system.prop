@@ -267,3 +267,6 @@ camera.notify_nfc=1
 persist.sys.disable_rescue=true
 
 debug.hwui.use_buffer_age=false
+
+# Codec2 switch
+debug.media.codec2=2
