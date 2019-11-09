@@ -81,3 +81,13 @@ LOCAL_SRC_FILES       := sbin/chargeonlymode
 LOCAL_MODULE_TAGS     := optional
 LOCAL_MODULE_CLASS    := EXECUTABLES
 include $(BUILD_PREBUILT)
+
+# Loggy for testing
+include $(CLEAR_VARS)
+LOCAL_MODULE        := loggy.sh
+LOCAL_MODULE_TAGS   := optional
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_SRC_FILES     := etc/loggy.sh
+LOCAL_MODULE_PATH   := $(TARGET_ROOT_OUT)
+include $(BUILD_PREBUILT)
+

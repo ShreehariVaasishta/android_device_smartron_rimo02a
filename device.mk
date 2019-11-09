@@ -361,7 +361,6 @@ PRODUCT_PACKAGES += \
     init.target.rc \
     init.qcom.usb.rc \
     init.qcom.power.rc \
-    loggy.sh \
     ueventd.qcom.rc
 
 # RCS
@@ -425,7 +424,11 @@ PRODUCT_COPY_FILES += \
 # USB HAL
 PRODUCT_PACKAGES += \
     android.hardware.usb@1.0-service.basic
-    
+
+# loggy
+PRODUCT_PACKAGES += \
+    loggy.sh
+
 # Vendor security patch level
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.lineage.build.vendor_security_patch=2016-12-01
